@@ -57,7 +57,7 @@ export function ChatKitPanel({
     () => isBrowser && window.customElements?.get("openai-chatkit") ? "ready" : "pending"
   );
   const [widgetInstanceKey, setWidgetInstanceKey] = useState(0);
-
+  const hasValidSession = useRef(false);
   const setErrorState = useCallback((updates: Partial<ErrorState>) => {
     setErrors((current) => ({ ...current, ...updates }));
   }, []);
@@ -174,11 +174,11 @@ export function ChatKitPanel({
       }
 
       if (isMountedRef.current) {
-        if (!currentSecret) {
-          setIsInitializingSession(true);
+      if (!currentSecret && !hasValidSession.current) {
+    setIsInitializingSession(true);
         }
-        setErrorState({ session: null, integration: null, retryable: false });
-      }
+  setErrorState({ session: null, integration: null, retryable: false });
+   }
 
       try {
         const response = await fetch(CREATE_SESSION_ENDPOINT, {
@@ -233,8 +233,9 @@ export function ChatKitPanel({
         }
 
         if (isMountedRef.current) {
-          setErrorState({ session: null, integration: null });
-        }
+  setErrorState({ session: null, integration: null });
+  hasValidSession.current = true;
+     }
 
         return clientSecret;
       } catch (error) {
