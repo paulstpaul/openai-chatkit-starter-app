@@ -413,6 +413,13 @@ function extractErrorDetail(
   if (typeof payload.message === "string") {
     return payload.message;
   }
-
+// Add right before the return statement
+console.log('[DEBUG]', {
+  isInitializingSession,
+  blockingError,
+  scriptStatus,
+  hasControl: Boolean(chatkit.control),
+  errors,
+});
   return fallback;
 }
