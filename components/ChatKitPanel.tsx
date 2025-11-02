@@ -53,7 +53,7 @@ export function ChatKitPanel({
   const [errors, setErrors] = useState<ErrorState>(() => createInitialErrors());
   const [isInitializingSession, setIsInitializingSession] = useState(true);
   const isMountedRef = useRef(true);
-  const [scriptStatus, setScriptStatus] = useState<
+  const [scriptStatus, setScriptStatus] = useState
     "pending" | "ready" | "error"
   >(() =>
     isBrowser && window.customElements?.get("openai-chatkit")
@@ -333,6 +333,14 @@ export function ChatKitPanel({
   const activeError = errors.session ?? errors.integration;
   const blockingError = errors.script ?? activeError;
 
+  console.log('[DEBUG STATE]', {
+    isInitializingSession,
+    blockingError,
+    scriptStatus,
+    hasControl: Boolean(chatkit.control),
+    errors,
+  });
+
   if (isDev) {
     console.debug("[ChatKitPanel] render state", {
       isInitializingSession,
@@ -342,28 +350,7 @@ export function ChatKitPanel({
       workflowId: WORKFLOW_ID,
     });
   }
-export function ChatKitPanel({
-  theme,
-  onWidgetAction,
-  onResponseEnd,
-  onThemeRequest,
-}: ChatKitPanelProps) {
-  // ... lots of code ...
-  
-  const activeError = errors.session ?? errors.integration;
-  const blockingError = errors.script ?? activeError;
 
-  // ADD IT HERE - right before the return
-  console.log('[DEBUG STATE]', {
-    isInitializingSession,
-    blockingError,
-    scriptStatus,
-    hasControl: Boolean(chatkit.control),
-    errors,
-  });
-
-  return (
-    <div className="relative pb-8..."></div>
   return (
     <div className="relative pb-8 flex h-[90vh] w-full rounded-2xl flex-col overflow-hidden bg-white shadow-sm transition-colors dark:bg-slate-900">
       <ChatKit
