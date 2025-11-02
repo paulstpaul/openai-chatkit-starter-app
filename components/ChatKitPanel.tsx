@@ -342,7 +342,28 @@ export function ChatKitPanel({
       workflowId: WORKFLOW_ID,
     });
   }
+export function ChatKitPanel({
+  theme,
+  onWidgetAction,
+  onResponseEnd,
+  onThemeRequest,
+}: ChatKitPanelProps) {
+  // ... lots of code ...
+  
+  const activeError = errors.session ?? errors.integration;
+  const blockingError = errors.script ?? activeError;
 
+  // ADD IT HERE - right before the return
+  console.log('[DEBUG STATE]', {
+    isInitializingSession,
+    blockingError,
+    scriptStatus,
+    hasControl: Boolean(chatkit.control),
+    errors,
+  });
+
+  return (
+    <div className="relative pb-8..."></div>
   return (
     <div className="relative pb-8 flex h-[90vh] w-full rounded-2xl flex-col overflow-hidden bg-white shadow-sm transition-colors dark:bg-slate-900">
       <ChatKit
@@ -413,13 +434,6 @@ function extractErrorDetail(
   if (typeof payload.message === "string") {
     return payload.message;
   }
-// Add right before the return statement
-console.log('[DEBUG]', {
-  isInitializingSession,
-  blockingError,
-  scriptStatus,
-  hasControl: Boolean(chatkit.control),
-  errors,
-});
+
   return fallback;
 }
