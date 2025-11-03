@@ -288,19 +288,24 @@ export function ChatKitPanel({
   const activeError = errors.session ?? errors.integration;
   const blockingError = errors.script ?? activeError;
 
-  console.log("[DEBUG]", { isInitializingSession, blockingError, hasValidSession: hasValidSession.current });
+  console.log("[DEBUG]", { 
+  isInitializingSession, 
+  blockingError, 
+  hasValidSession: hasValidSession.current,
+  hasControl: Boolean(chatkit.control)
+});
 
   return (
     <div className="relative pb-8 flex h-[90vh] w-full rounded-2xl flex-col overflow-hidden bg-white shadow-sm transition-colors dark:bg-slate-900">
-      <ChatKit
-        key={widgetInstanceKey}
-        control={chatkit.control}
-        className={
-          blockingError || isInitializingSession
-            ? "pointer-events-none opacity-0"
-            : "block h-full w-full"
-        }
-      />
+     <ChatKit
+  key={widgetInstanceKey}
+  control={chatkit.control}
+  className={
+    blockingError || (isInitializingSession && !hasValidSession.current)
+      ? "pointer-events-none opacity-0"
+      : "block h-full w-full"
+  }
+/>
       <ErrorOverlay
         error={blockingError}
         fallbackMessage={
