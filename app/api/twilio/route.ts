@@ -1,9 +1,19 @@
 import OpenAI from "openai";
 import { NextRequest } from "next/server";
 
+// Extend the OpenAI client type to include workflows without using 'any'
+interface OpenAIWithWorkflows extends OpenAI {
+  workflows: {
+    invoke: (
+      id: string,
+      args: { input: { input_as_text: string } }
+    ) => Promise<{ output_text?: string }>;
+  };
+}
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-}) as unknown as { workflows: any }; // 👈 works at runtime and silences TypeScript
+}) as OpenAIWithWorkflows;
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
