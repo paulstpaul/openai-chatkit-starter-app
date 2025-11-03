@@ -1,8 +1,9 @@
 import OpenAI from "openai";
 import { NextRequest } from "next/server";
 
-// Use 'any' to bypass TypeScript's outdated type definitions
-const openai: any = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+}) as unknown as { workflows: any }; // 👈 works at runtime and silences TypeScript
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -12,7 +13,6 @@ export async function POST(req: NextRequest) {
   console.log("Incoming SMS:", message);
 
   try {
-    // @ts-ignore  // Ignore TypeScript error about missing 'workflows'
     const result = await openai.workflows.invoke(process.env.WORKFLOW_ID!, {
       input: { input_as_text: message },
     });
