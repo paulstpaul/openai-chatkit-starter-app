@@ -150,10 +150,7 @@ export function ChatKitPanel({
 
   const getClientSecret = useCallback(
     async (currentSecret: string | null) => {
-      console.log("[getClientSecret] Called with", {
-        hasCurrentSecret: Boolean(currentSecret),
-        hasValidSession: hasValidSession.current,
-      });
+      console.log("[getClientSecret] Called");
 
       if (!isWorkflowConfigured) {
         const detail = "Set NEXT_PUBLIC_CHATKIT_WORKFLOW_ID in your .env.local file.";
@@ -164,7 +161,6 @@ export function ChatKitPanel({
         throw new Error(detail);
       }
 
-      // Only show loading if we don't have a session yet
       if (isMountedRef.current && !hasValidSession.current) {
         setIsInitializingSession(true);
         setErrorState({ session: null, integration: null, retryable: false });
@@ -195,7 +191,7 @@ export function ChatKitPanel({
 
         if (!response.ok) {
           const detail = extractErrorDetail(data, response.statusText);
-          console.error("Session creation failed", { status: response.status, body: data });
+          console.error("Session creation failed", { status: response.status });
           throw new Error(detail);
         }
 
@@ -204,7 +200,6 @@ export function ChatKitPanel({
           throw new Error("Missing client secret in response");
         }
 
-        // Success! Mark session as valid and stop loading
         if (isMountedRef.current) {
           hasValidSession.current = true;
           setIsInitializingSession(false);
@@ -288,31 +283,14 @@ export function ChatKitPanel({
   const activeError = errors.session ?? errors.integration;
   const blockingError = errors.script ?? activeError;
 
-  console.log("[DEBUG]", { 
-  isInitializingSession, 
-  blockingError, 
-  hasValidSession: hasValidSession.current,
-  hasControl: Boolean(chatkit.control)
-});
+  console.log("[DEBUG]", { isInitializingSession, blockingError, hasValidSession: hasValidSession.current });
 
   return (
     <div className="relative pb-8 flex h-[90vh] w-full rounded-2xl flex-col overflow-hidden bg-white shadow-sm transition-colors dark:bg-slate-900">
-     <ChatKit
-  key={widgetInstanceKey}
-  control={chatkit.control}
-  className={
-    blockingError || (isInitializingSession && !hasValidSession.current)
-      ? "pointer-events-none opacity-0"
-      : "block h-full w-full"
-  }
-/>
-      <ErrorOverlay
-        error={blockingError}
-        fallbackMessage={
-          blockingError || !isInitializingSession ? null : "Loading assistant session..."
-        }
-        onRetry={blockingError && errors.retryable ? handleResetChat : null}
-        retryLabel="Restart chat"
+      <ChatKit
+        key={widgetInstanceKey}
+        control={chatkit.control}
+        className="block h-full w-full"
       />
     </div>
   );
